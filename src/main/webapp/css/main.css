@@ -1,0 +1,14 @@
+table {
+	display: block;
+	text-align: left;
+	border: 2px;
+	margin-bottom: 5px;
+}
+
+th {
+	background-color: #40b9bf;
+}
+
+tr:nth-child(even) {
+	background-color: #c3f5f7;
+}
