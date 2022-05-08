@@ -89,7 +89,7 @@ public class Dao {
 	}
 	public boolean lisaaAsiakas(Asiakas asiakas) {
 		boolean paluuArvo=true;
-		sql="INSERT INTO asiakkaat VALUES(?,?,?,?)";
+		sql="INSERT INTO asiakkaat(etunimi, sukunimi, puhelin, sposti) VALUES(?,?,?,?)";
 		try {
 			con = yhdista();
 			stmtPrep=con.prepareStatement(sql);
@@ -105,13 +105,57 @@ public class Dao {
 		}
 		return paluuArvo;
 	}
-	public boolean poistaAsiakas (String asiakas_id) {
+	public boolean poistaAsiakas (int asiakas_id) {
 		boolean paluuArvo=true;
 		sql="DELETE FROM asiakkaat WHERE asiakas_id=?";
 		try {
 			con = yhdista();
 			stmtPrep=con.prepareStatement(sql);
-			stmtPrep.setString(1, asiakas_id);
+			stmtPrep.setInt(1, asiakas_id);
+			stmtPrep.executeUpdate();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			paluuArvo=false;
+		}
+		return paluuArvo;
+	}
+	
+	public Asiakas etsiAsiakas(int asiakas_id) {
+		Asiakas asiakas = null;
+		sql = "SELECT * FROM asiakkaat WHERE asiakas_id=?";
+		try {
+			con=yhdista();
+			if(con!=null) {
+				stmtPrep = con.prepareStatement(sql);
+				stmtPrep.setInt(1, asiakas_id);
+				rs = stmtPrep.executeQuery();
+				if(rs.isBeforeFirst()) {
+					rs.next();
+					asiakas = new Asiakas();
+					asiakas.setEtunimi(rs.getString(1));
+					asiakas.setSukunimi(rs.getString(2));
+					asiakas.setPuhelin(rs.getString(3));
+					asiakas.setSposti(rs.getString(4));
+					
+				}
+			}
+			con.close();
+		} catch (Exception e ) {
+			e.printStackTrace();
+		}
+		return asiakas;
+	}
+	public boolean muutaAsiakas(Asiakas asiakas, int asiakas_id) {
+		boolean paluuArvo=true;
+		sql="UPDATE asiakkaat SET etunimi=?, sukunimi=?, puhelin=?, sposti=? WHERE asiakas_id=?";
+		try {
+			con = yhdista();
+			stmtPrep=con.prepareStatement(sql);
+			stmtPrep.setString(1, asiakas.getEtunimi());
+			stmtPrep.setString(2, asiakas.getSukunimi());
+			stmtPrep.setString(3, asiakas.getPuhelin());
+			stmtPrep.setString(4, asiakas.getSposti());
 			stmtPrep.executeUpdate();
 			con.close();
 		} catch (Exception e) {
