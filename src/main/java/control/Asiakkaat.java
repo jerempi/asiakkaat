@@ -26,15 +26,18 @@ public class Asiakkaat extends HttpServlet {
 		System.out.println("Asiakkaat.doGet()");
 		String pathInfo = request.getPathInfo();
 		System.out.println("polku: "+pathInfo);
-		Dao dao = new Dao();
-		ArrayList<Asiakas> asiakkaat;
 		String strJSON="";
+		ArrayList<Asiakas> asiakkaat;
+		Dao dao = new Dao();
 		if(pathInfo==null) {
 			asiakkaat = dao.listaaKaikki();
 			strJSON = new JSONObject().put("asiakkaat", asiakkaat).toString();
-		}else if(pathInfo.indexOf("haeyksi") !=-1) {
+		}else if(pathInfo.indexOf("haeyksi")!=-1) {
 			int asiakas_id = Integer.parseInt(pathInfo.replace("/haeyksi/", ""));
 			Asiakas asiakas = dao.etsiAsiakas(asiakas_id);
+			if(asiakas==null) {
+				strJSON = "{}";
+			}else{
 			JSONObject JSON = new JSONObject();
 			JSON.put("asiakas_id", asiakas.getAsiakas_id());
 			JSON.put("etunimi", asiakas.getEtunimi());
@@ -42,6 +45,7 @@ public class Asiakkaat extends HttpServlet {
 			JSON.put("puhelin", asiakas.getPuhelin());
 			JSON.put("sposti", asiakas.getSposti());
 			strJSON = JSON.toString();
+			}
 		} else {
 			String hakusana = pathInfo.replace("/", "");
 			asiakkaat = dao.listaaKaikki(hakusana);
@@ -73,8 +77,8 @@ public class Asiakkaat extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	System.out.println("Asiakkaat.doPut()");
 		JSONObject jsonObj = new JsonStrToObj().convert(request);
-		int asiakas_id = jsonObj.getInt("asiakas_id");
 		Asiakas asiakas = new Asiakas();
+		asiakas.setAsiakas_id(Integer.parseInt(jsonObj.getString("asiakas_id")));
 		asiakas.setEtunimi(jsonObj.getString("etunimi"));
 		asiakas.setSukunimi(jsonObj.getString("sukunimi"));
 		asiakas.setPuhelin(jsonObj.getString("puhelin"));
@@ -82,7 +86,7 @@ public class Asiakkaat extends HttpServlet {
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		Dao dao = new Dao();
-		if(dao.muutaAsiakas(asiakas, asiakas_id)) {
+		if(dao.muutaAsiakas(asiakas)) {
 			out.println("{\"response\":1}");
 		} else {
 			out.println("{\"response\":0}");

@@ -60,7 +60,7 @@ $(document).ready(function(){
 			},
 			sposti: {
 				required: true,
-				minlength: true
+				email: true
 			}
 		},
 		messages: {
@@ -78,7 +78,7 @@ $(document).ready(function(){
 			},
 			sposti: {
 				required: "Puuttuu",
-				minlength: "Ei kelpaa"
+				email: "Ei kelpaa"
 			}
 		},
 		submitHandler: function(form) {
